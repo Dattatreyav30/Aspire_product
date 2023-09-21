@@ -1,10 +1,10 @@
 const Sequelize = require("sequelize");
-const sequelize = require("sequelize");
-const User = sequelize.ddefine('user',{
+const sequelize = require("../../util/database");
+const User = sequelize.define('user',{
     id :{
         type : Sequelize.INTEGER,
         primaryKey : true,
-        autoInrement : true
+        autoIncrement : true
     },
     companyName : {
         type : Sequelize.STRING,
@@ -15,10 +15,14 @@ const User = sequelize.ddefine('user',{
         allowNull : false
     },
     mobile : {
-        type : Sequelize.INTEGER,
+        type : Sequelize.BIGINT,
         allowNull : false
     }
     ,
+    email : {
+        type : Sequelize.STRING,
+        allowNull : false
+    },
     password : {
         type : Sequelize.STRING,
         allowNull : false  
