@@ -1,5 +1,8 @@
 const User = require("../../models/user_model/userModel");
+
 const bcrypt = require("bcrypt");
+
+const emailSender = require("../../middleware/email");
 
 exports.userSignup = async (req, res) => {
   try {
@@ -17,11 +20,11 @@ exports.userSignup = async (req, res) => {
       email,
       password: hashedPassword,
     });
+    emailSender(email, companyName); // here sending to verification link to company
     res
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
   } catch (error) {
-    console.error("Error in userSignup:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

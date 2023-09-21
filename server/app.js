@@ -15,10 +15,10 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use("/user",userRoute);
+app.use("/user", userRoute);
 
 sequelize.sync();
-      
+
 app.listen(6666, () => {
   console.log("listening on 6666");
 });
