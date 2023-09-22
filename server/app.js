@@ -13,6 +13,7 @@ const userRoute = require("./routes/user_route/userRoute");
 
 const userModel = require("./models/user_model/userModel");
 const userVerificationModel = require("./models/user_model/emailVerificationModel");
+const userForgotModel = require("./models/user_model/forgotModel");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -21,6 +22,9 @@ app.use("/user", userRoute);
 
 userModel.hasMany(userVerificationModel);
 userVerificationModel.belongsTo(userModel);
+
+userModel.hasMany(userForgotModel);
+userForgotModel.belongsTo(userModel);
 
 sequelize.sync();
 

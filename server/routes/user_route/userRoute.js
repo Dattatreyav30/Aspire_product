@@ -15,4 +15,6 @@ router.get(
 
 router.post("/login", userController.Login);
 
+router.post("/reset-password", userController.resetPasswordLink);
+
 module.exports = router;

@@ -1,5 +1,6 @@
 const User = require("../../models/user_model/userModel");
 const emailVerificationModel = require("../../models/user_model/emailVerificationModel");
+// const userForgotPasswordModel = require("../../models/user_model/forgotModel");
 
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
@@ -32,8 +33,12 @@ exports.userSignup = async (req, res) => {
     const uuid = uuidv4();
     const jwtUserId = jwt.sign({ userId: newUser.id }, jwtSecretKey);
 
-    emailSender(email, companyName, `${jwtUserId}/${uuid}`); // here sending to verification link to company
-
+    emailSender(
+      email,
+      companyName,
+      `http://localhost:7000/user/verification/${jwtUserId}/${uuid}`,
+      "Email Verification"
+    );
     await emailVerificationModel.create({
       uniqueId: uuid,
       isActive: true,
@@ -43,6 +48,7 @@ exports.userSignup = async (req, res) => {
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -97,7 +103,39 @@ exports.Login = async (req, res) => {
       userId: generateAccessToken(userDetails.id),
     });
   } catch (err) {
-    // console.log(err)
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.resetPasswordLink = async (req, res) => {
+  try {
+    // const uniqueId = req.params.uniqueId;
+    // const userId = req.user.userId;
+    // const emailForgotPassword = await userForgotPasswordModel.findOne({
+    //   where: { userId: userId, uniqueId: uniqueId, isActive: true },
+    // });
+    const { email } = req.body;
+    const userDetails = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (!userDetails) {
+      throw new Error("please enter valid email address");
+    }
+    const uuid = uuidv4();
+    const jwtToken = jwt.sign({ userId: userDetails.id }, jwtSecretKey);
+    console.log(jwtToken);
+
+    emailSender(
+      email,
+      userDetails.companyName,
+      `http://localhost:7000/user/update-password/${jwtToken}/${uuid} `,
+      `Reset Password Link`
+    );
+    res.status(200).json({ message: "reset password link sent successfully" });
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ message: err.message });
   }
 };
