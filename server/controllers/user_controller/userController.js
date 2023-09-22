@@ -24,7 +24,7 @@ exports.userSignup = async (req, res) => {
       mobile,
       email,
       password: hashedPassword,
-      isVerified : false
+      isVerified: false,
     });
 
     const uuid = uuidv4();
@@ -48,16 +48,9 @@ exports.userSignup = async (req, res) => {
 exports.verification = async (req, res) => {
   try {
     const uniqueId = req.params.uniqueId;
-    const jwtUserId = req.params.userId;
-
-    let user;
-    try {
-      user = jwt.verify(jwtUserId, jwtSecretKey);
-    } catch (jwtError) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    const userId = req.user.userId;
     const verificationRow = await emailVerificationModel.findOne({
-      where: { userId: user.userId, uniqueId: uniqueId, isActive: true },
+      where: { userId: userId, uniqueId: uniqueId, isActive: true },
     });
     if (!verificationRow) {
       return res
@@ -66,9 +59,9 @@ exports.verification = async (req, res) => {
     }
     await emailVerificationModel.update(
       { isActive: false },
-      { where: { userId: user.userId, uniqueId: uniqueId } }
+      { where: { userId: userId, uniqueId: uniqueId } }
     );
-    await User.update({isVerified : true},{where : {id : user.userId}})
+    await User.update({ isVerified: true }, { where: { id: userId } });
     res.status(200).json({ message: "Email verification successful" });
   } catch (err) {
     console.error(err);
