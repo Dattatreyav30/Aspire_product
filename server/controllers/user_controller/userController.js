@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 const jwtSecretKey = process.env.JWT_SECRETKEY;
 
 const emailSender = require("../../assets/email");
+const generateAccessToken =
+  require("../../assets/generateAccessToken").generateAccessToken;
 
 exports.userSignup = async (req, res) => {
   try {
@@ -66,5 +68,36 @@ exports.verification = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.Login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(email, password);
+    const userDetails = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (!userDetails) {
+      throw new Error("User not found");
+    }
+
+    if (!userDetails.isVerified) {
+      throw new Error("please verify your email address");
+    }
+
+    const match = await bcrypt.compare(password, userDetails.password);
+    if (!match) {
+      throw new Error("Password is incorrect");
+    }
+    res.status(200).json({
+      message: "User logged in succesfully",
+      userId: generateAccessToken(userDetails.id),
+    });
+  } catch (err) {
+    // console.log(err)
+    res.status(500).json({ message: err.message });
   }
 };

@@ -50,9 +50,10 @@ const sendEmail = (senderEmail, senderName, uniqueId) => {
   sendSmtpEmail.replyTo = { email: "Aspire@gmail.com", name: "reuben" };
   sendSmtpEmail.headers = { "Some-Custom-Name": "unique-id-1234" };
   sendSmtpEmail.params = {
-    name: "Recipient Name", // Replace with the recipient's name
-    verificationLink: "http://localhost:6666/user/verification/" + uniqueId,
-    organization: "Your Organization Name", // Replace with your organization name
+    name: "Recipient Name",
+    verificationLink: "http://localhost:7000/user/verification/" + uniqueId,
+    organization: "Aspire",
+    e,
   };
 
   apiInstance.sendTransacEmail(sendSmtpEmail).then(
