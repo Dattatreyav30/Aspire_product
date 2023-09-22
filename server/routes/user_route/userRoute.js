@@ -17,4 +17,10 @@ router.post("/login", userController.Login);
 
 router.post("/reset-password", userController.resetPasswordLink);
 
+router.post(
+  "/update-password/:userId/:uniqueId",
+  emailAuth.emailAuthorization,
+  userController.updatePassword
+);
+
 module.exports = router;

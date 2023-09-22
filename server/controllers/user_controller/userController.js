@@ -1,6 +1,6 @@
 const User = require("../../models/user_model/userModel");
 const emailVerificationModel = require("../../models/user_model/emailVerificationModel");
-// const userForgotPasswordModel = require("../../models/user_model/forgotModel");
+const userForgotPasswordModel = require("../../models/user_model/forgotModel");
 
 const bcrypt = require("bcrypt");
 const { v4: uuidv4 } = require("uuid");
@@ -109,11 +109,6 @@ exports.Login = async (req, res) => {
 
 exports.resetPasswordLink = async (req, res) => {
   try {
-    // const uniqueId = req.params.uniqueId;
-    // const userId = req.user.userId;
-    // const emailForgotPassword = await userForgotPasswordModel.findOne({
-    //   where: { userId: userId, uniqueId: uniqueId, isActive: true },
-    // });
     const { email } = req.body;
     const userDetails = await User.findOne({
       where: {
@@ -125,7 +120,12 @@ exports.resetPasswordLink = async (req, res) => {
     }
     const uuid = uuidv4();
     const jwtToken = jwt.sign({ userId: userDetails.id }, jwtSecretKey);
-    console.log(jwtToken);
+
+    await userForgotPasswordModel.create({
+      userId: userDetails.id,
+      uniqueId: uuid,
+      isActive: true,
+    });
 
     emailSender(
       email,
@@ -136,6 +136,29 @@ exports.resetPasswordLink = async (req, res) => {
     res.status(200).json({ message: "reset password link sent successfully" });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const uniqueId = req.params.uniqueId;
+    const { password } = req.body;
+    const details = await userForgotPasswordModel.findOne({
+      where: { userId: userId, uniqueId: uniqueId, isActive: true },
+    });
+    if (!details) {
+      throw new Error("reset link is expired/already used/invalid");
+    }
+    await userForgotPasswordModel.update(
+      { isActive: false },
+      { where: { userId: userId } }
+    );
+    const hashedPassword = await bcrypt.hash(password, 5);
+    await User.update({ password: hashedPassword }, { where: { id: userId } });
+    res.status(200).json({ message: "password updated successfully" });
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };

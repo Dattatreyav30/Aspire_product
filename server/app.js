@@ -24,7 +24,7 @@ userModel.hasMany(userVerificationModel);
 userVerificationModel.belongsTo(userModel);
 
 userModel.hasMany(userForgotModel);
-userForgotModel.belongsTo(userModel);
+userForgotModel.belongsTo(userModel);  
 
 sequelize.sync();
 

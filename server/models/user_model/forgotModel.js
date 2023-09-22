@@ -5,8 +5,8 @@ const Sequelize = require("sequelize");
 const forgotModel = sequelize.define("userForgot", {
   id: {
     type: Sequelize.INTEGER,
-    allowNull: false,
     primaryKey: true,
+    autoIncrement: true,
   },
   uniqueId: {
     type: Sequelize.STRING,
@@ -18,4 +18,4 @@ const forgotModel = sequelize.define("userForgot", {
   },
 });
 
-module.exports = forgotModel
+module.exports = forgotModel;
