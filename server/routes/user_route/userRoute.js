@@ -25,5 +25,14 @@ router.post(
   emailAuth.emailAuthorization,
   userController.updatePassword
 );
-router.post("/add-one-employee", userAuth ,userEmployeeController.addOneEmploye);
+router.post(
+  "/add-one-employee",
+  userAuth,
+  userEmployeeController.addOneEmploye
+);
+router.post(
+  "/add-many-employee",
+  userAuth,
+  userEmployeeController.addManyEmployees
+);
 module.exports = router;
