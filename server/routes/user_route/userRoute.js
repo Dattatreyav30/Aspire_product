@@ -3,7 +3,10 @@ const express = require("express");
 const router = express.Router();
 
 const userController = require("../../controllers/user_controller/userController");
+const userEmployeeController = require("../../controllers/user_controller/userEmployeeController");
+
 const emailAuth = require("../../middleware/emailAuth");
+const userAuth = require("../../middleware/userAuth");
 
 router.post("/signup", userController.userSignup);
 
@@ -22,5 +25,5 @@ router.post(
   emailAuth.emailAuthorization,
   userController.updatePassword
 );
-
+router.post("/add-one-employee", userAuth ,userEmployeeController.addOneEmploye);
 module.exports = router;
