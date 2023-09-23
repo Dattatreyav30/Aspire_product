@@ -29,7 +29,7 @@ userModel.hasMany(userForgotModel);
 userForgotModel.belongsTo(userModel);
 
 userModel.hasMany(employeeModel);
-employeeModel.belongsTo(userModel)
+employeeModel.belongsTo(userModel);
 
 sequelize.sync();
 

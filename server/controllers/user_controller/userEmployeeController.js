@@ -36,10 +36,11 @@ exports.addOneEmploye = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 exports.addManyEmployees = async (req, res) => {
   try {
-    const userDataArray = req.body.userData; 
-    
+    const userDataArray = req.body.userData;
+
     for (const userData of userDataArray) {
       const { name, email, city, mobile, department, designation } = userData;
       const password = passwordGenerator();
