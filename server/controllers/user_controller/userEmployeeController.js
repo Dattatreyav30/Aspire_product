@@ -12,7 +12,7 @@ exports.addOneEmploye = async (req, res) => {
       where: { userId: req.user.jwtUserToken, email: email },
     });
     if (sameEmployeeCheck) {
-      throw new Error("he is already an employee");
+      throw new Error("your employee is already added in database ");
     }
     await EmployeeModel.create({
       name,
@@ -25,6 +25,7 @@ exports.addOneEmploye = async (req, res) => {
       totalPoints: 0,
       password: password,
       userId: req.user.jwtUserToken,
+      passwordChanged : false
     });
     const content = {
       email: email,
@@ -63,6 +64,7 @@ exports.addManyEmployees = async (req, res) => {
         totalPoints: 0,
         password: password,
         userId: req.user.jwtUserToken,
+        passwordChanged : false
       });
 
       const content = {

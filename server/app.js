@@ -11,6 +11,7 @@ app.use(cors());
 const sequelize = require("./util/database");
 
 const userRoute = require("./routes/user_route/userRoute");
+const EmployeeRoute = require("./routes/employee_route/EmployeeRoute");
 
 const userModel = require("./models/user_model/userModel");
 const userVerificationModel = require("./models/user_model/emailVerificationModel");
@@ -21,6 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/user", userRoute);
+app.use("/employee",EmployeeRoute);
 
 userModel.hasMany(userVerificationModel);
 userVerificationModel.belongsTo(userModel);
