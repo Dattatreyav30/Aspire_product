@@ -1,8 +1,8 @@
 const EmployeeModel = require("../../models/employee_model/employeeModel");
 
-const emailSender = require("../../assets/email");
+const emailSender = require("../../helpers/email");
 
-const passwordGenerator = require("../../assets/passwordgenerator");
+const passwordGenerator = require("../../helpers/passwordgenerator");
 
 exports.addOneEmploye = async (req, res) => {
   try {

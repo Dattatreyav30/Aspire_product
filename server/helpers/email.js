@@ -1,17 +1,11 @@
 require("dotenv").config();
+const brevo = require("@getbrevo/brevo");
 
-const sendEmail = (senderEmail, senderName, link, emailHeading) => {
-  console.log(emailHeading)
-  const brevo = require("@getbrevo/brevo");
-  let defaultClient = brevo.ApiClient.instance;
-  let apiKey = defaultClient.authentications["api-key"];
-  apiKey.apiKey = process.env.BREVO_API_KEY;
+const sendEmail = (senderEmail, senderName, link, emailHeading, btnName) => {
+  const apiKey = process.env.BREVO_API_KEY;
+  const apiInstance = new brevo.TransactionalEmailsApi();
 
-  let apiInstance = new brevo.TransactionalEmailsApi();
-  let sendSmtpEmail = new brevo.SendSmtpEmail();
-  sendSmtpEmail.subject = "Email Verification";    
-  sendSmtpEmail.htmlContent = `
-    <!DOCTYPE html>
+  const emailContent = `
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -27,45 +21,48 @@ const sendEmail = (senderEmail, senderName, link, emailHeading) => {
             </tr>
             <tr>
                 <td style="text-align: center; padding: 20px;">
-                    <h2 style="color: #333;">Email Verification</h2>
+                    <h2 style="color: #333;">${emailHeading}</h2>
                     <p>${senderName}</p>
                     <p>Thank you for registering with our service. To verify your email address and complete the registration process, please click the following button:</p>
-                    <p><a href="${link}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none;">Verify Email</a></p>
+                    <p><a href="${link}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none;">${btnName}</a></p>
                     <p>If the button above doesn't work, you can also copy and paste the following URL into your web browser:</p>
                     <p>${link}</p>
                     <p>If you did not sign up for our service, you can safely ignore this email.</p>
                     <p>Best regards,</p>
-                    <p>Your Organization Name</p> <!-- Replace with your organization name -->
+                    <p>Aspire</p>
                 </td>
             </tr>
         </table>
     </body>
     </html>
   `;
-  sendSmtpEmail.sender = {
-    name: "Aspire",
-    email: "Aspire@gmail.com",
-  };
 
-  sendSmtpEmail.to = [{ email: senderEmail, name: senderName }];
-  sendSmtpEmail.replyTo = { email: "Aspire@gmail.com", name: "reuben" };
-  sendSmtpEmail.headers = { "Some-Custom-Name": "unique-id-1234" };
-  sendSmtpEmail.params = {
-    name: senderName,
-    verificationLink: link,
-    organization: "Aspire",
-  };
-
-  apiInstance.sendTransacEmail(sendSmtpEmail).then(
-    function (data) {
-      console.log(
-        "API called successfully. Returned data: " + JSON.stringify(data)
-      );
+  const sendSmtpEmail = {
+    subject: "Email Verification",
+    htmlContent: emailContent,
+    sender: {
+      name: "Aspire",
+      email: "Aspire@gmail.com",
     },
-    function (error) {
-      console.error(error);
-    }
-  );
+    to: [{ email: senderEmail, name: senderName }],
+    replyTo: { email: "Aspire@gmail.com", name: "reuben" },
+    headers: { "Some-Custom-Name": "unique-id-1234" },
+    params: {
+      name: senderName,
+      verificationLink: link,
+      organization: "Aspire",
+    },
+  };
+
+  brevo.ApiClient.instance.authentications["api-key"].apiKey = apiKey;
+
+  apiInstance.sendTransacEmail(sendSmtpEmail)
+    .then(function (data) {
+      console.log("Email sent successfully:", data);
+    })
+    .catch(function (error) {
+      console.error("Error sending email:", error);
+    });
 };
 
 module.exports = sendEmail;

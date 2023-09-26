@@ -8,9 +8,9 @@ const jwt = require("jsonwebtoken");
 
 const jwtSecretKey = process.env.JWT_SECRETKEY;
 
-const emailSender = require("../../assets/email");
+const emailSender = require("../../helpers/email");
 const generateAccessToken =
-  require("../../assets/generateAccessToken").generateAccessToken;
+  require("../../helpers/generateAccessToken").generateAccessToken;
 
 exports.userSignup = async (req, res) => {
   try {
@@ -37,7 +37,8 @@ exports.userSignup = async (req, res) => {
       email,
       companyName,
       `http://localhost:7000/user/verification/${jwtUserId}/${uuid}`,
-      "Email Verification"
+      "Email Verification",
+      "Verify Email"
     );
     await emailVerificationModel.create({
       uniqueId: uuid,
@@ -131,7 +132,8 @@ exports.resetPasswordLink = async (req, res) => {
       email,
       userDetails.companyName,
       `http://localhost:7000/user/update-password/${jwtToken}/${uuid} `,
-      `Reset Password Link`
+      "Reset Password Link",
+      "Reset Password"
     );
     res.status(200).json({ message: "reset password link sent successfully" });
   } catch (err) {
@@ -162,4 +164,3 @@ exports.updatePassword = async (req, res, next) => {
     res.status(500).json({ message: err.message });
   }
 };
- 
